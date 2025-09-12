@@ -1,0 +1,28 @@
+# Use root/example as user/password credentials
+
+services:
+  mongodb:
+    image: mongo:latest
+    environment:
+      - MONGODB_DATABASE="test"
+    ports:
+      - 27017:27017
+
+  db:
+    image: mysql
+    container_name: ${MYSQL_CONTAINER_NAME}
+    restart: always
+    ports:
+      - "${MYSQL_HOST_PORT}:3306"
+    environment:
+       MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}  # 根用户密码
+    
+    volumes:
+      # 数据卷：将容器内的数据目录挂载到宿主机，实现数据持久化
+      - ${MYSQL_DATA_VOLUME}:/var/lib/mysql           
+
+  adminer:
+    image: adminer
+    restart: always
+    ports:
+      - "8080:8080"
