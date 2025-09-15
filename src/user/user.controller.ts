@@ -20,9 +20,7 @@ export class UserController {
 
   @Get()
   findAll() {
-    throw new HttpException('Forbidden', HttpStatus.FORBIDDEN);
-
-    // return this.userService.findAll();
+    return this.userService.findAll();
   }
 
   @Get(':id')

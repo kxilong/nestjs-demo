@@ -18,6 +18,7 @@ import { LoggerModule } from 'nestjs-pino';
 import { join } from 'path';
 import { Logger } from '@nestjs/common';
 import { LogsModule } from './logs/logs.module';
+import { config } from '../ormconfig';
 
 const envFilePath = `.env.${process.env.NODE_ENV}`;
 
@@ -58,18 +59,7 @@ const envFilePath = `.env.${process.env.NODE_ENV}`;
     TypeOrmModule.forRootAsync({
       imports: [ConfigModule],
       inject: [ConfigService],
-      useFactory: async (configService: ConfigService) =>
-        ({
-          type: configService.get('DB_TYPE'),
-          host: configService.get('DB_HOST'),
-          port: configService.get('DB_PORT'),
-          username: configService.get('DB_USERNAME'),
-          password: configService.get('DB_PASSWORD'),
-          database: configService.get('DB_DATABASE'),
-          entities: [User, Profile, Photo, Category, Question],
-          synchronize: true,
-          autoLoadEntities: true,
-        }) as TypeOrmModuleOptions,
+      useFactory: () => config,
     }),
     MongooseModule.forRoot('mongodb://localhost/nest'),
     UserModule,
