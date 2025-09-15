@@ -3,6 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { User } from './entities/user.entity';
 import { Repository } from 'typeorm';
 import { Photo } from 'src/photo/entities/photo.entity';
+import { getUserDto } from './dto/query-user.dto';
 
 @Injectable()
 export class UserService {
@@ -11,8 +12,22 @@ export class UserService {
     @InjectRepository(Photo) private photosRepository: Repository<Photo>,
   ) {}
 
-  findAll(): Promise<User[]> {
-    return this.usersRepository.find();
+  findAll(query: getUserDto): Promise<User[]> {
+    const { page, limit, name } = query;
+    const take = limit || 10;
+
+    return this.usersRepository.find({
+      select: {
+        id: true,
+        name: true,
+      },
+      where: { name },
+      relations: {
+        profile: true,
+      },
+      skip: (page - 1) * take,
+      take,
+    });
   }
 
   findOne(id: number): Promise<User | null> {

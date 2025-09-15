@@ -4,6 +4,17 @@ import { WinstonModule } from 'nest-winston';
 import winston from 'winston';
 import { Console, DailyRotateFile } from 'winston/lib/winston/transports';
 
+function createDailyRotateFileTransport() {
+  return new DailyRotateFile({
+    level: 'error',
+    filename: 'logs/%DATE%.log',
+    datePattern: 'YYYY-MM-DD',
+    zippedArchive: true,
+    maxSize: '20m',
+    maxFiles: '14d',
+  });
+}
+
 @Module({
   imports: [
     WinstonModule.forRootAsync({
@@ -18,19 +29,12 @@ import { Console, DailyRotateFile } from 'winston/lib/winston/transports';
             }),
           ),
         });
-        const dialyTransPorts = new DailyRotateFile({
-          level: 'error',
-          filename: 'logs/%DATE%.log',
-          datePattern: 'YYYY-MM-DD',
-          zippedArchive: true,
-          maxSize: '20m',
-          maxFiles: '14d',
-        });
-
         return {
           transports: [
             consoleTransPorts,
-            ...(configService.get('LOG_ON') ? [dialyTransPorts] : []),
+            ...(configService.get('LOG_ON') === 'true'
+              ? [createDailyRotateFileTransport()]
+              : []),
           ],
         };
       },

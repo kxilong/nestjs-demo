@@ -1,18 +1,42 @@
 import { TypeOrmModuleOptions } from '@nestjs/typeorm';
-import { Category } from 'src/category/entities/category.entity';
-import { Photo } from 'src/photo/entities/photo.entity';
-import { Profile } from 'src/profile/entities/profile.entity';
-import { Question } from 'src/question/entities/question.entity';
-import { User } from 'src/user/entities/user.entity';
+import { DataSource, DataSourceOptions } from 'typeorm';
+import dotenv from 'dotenv';
+import fs from 'fs';
 
-export const config = {
-  type: 'mysql',
-  host: 'localhost',
-  port: 3306,
-  username: 'root',
-  password: '123456',
-  database: 'test',
-  entities: [User, Profile, Photo, Category, Question],
-  synchronize: true,
-  autoLoadEntities: true,
-} as TypeOrmModuleOptions;
+function getEnv(env: string): Record<string, unknown> {
+  if (fs.existsSync(env)) {
+    return dotenv.parse(fs.readFileSync(env));
+  }
+  return {};
+}
+
+const entitiesDir =
+  process.env.NODE_ENV === 'test'
+    ? [__dirname + '/**/*.entity.ts']
+    : [__dirname + '/**/*.entity{.ts,.js}'];
+
+function buildConnectionOptions() {
+  const defaultConfig = getEnv(`.env`);
+  const envConfig = getEnv(`.env.${process.env.NODE_ENV || 'development'}`);
+  const config = { ...defaultConfig, ...envConfig };
+
+  return {
+    type: 'mysql',
+    host: config.DB_HOST,
+    port: Number(config.DB_PORT),
+    username: config.DB_USERNAME,
+    password: config.DB_PASSWORD,
+    database: config.DB_DATABASE,
+    entities: entitiesDir,
+    synchronize: true,
+    autoLoadEntities: true,
+  } as TypeOrmModuleOptions;
+}
+
+export const connectParams = buildConnectionOptions();
+
+export default new DataSource({
+  ...connectParams,
+  migrations: ['src/migration/*.ts'],
+  subscribers: [],
+} as DataSourceOptions);

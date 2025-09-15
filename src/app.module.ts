@@ -1,13 +1,8 @@
 import { Global, Module } from '@nestjs/common';
 import { AppController } from './app.controller';
-import { ConfigModule, ConfigService } from '@nestjs/config';
+import { ConfigModule } from '@nestjs/config';
 import * as dotenv from 'dotenv';
-import { TypeOrmModule, TypeOrmModuleOptions } from '@nestjs/typeorm';
-import { User } from './user/entities/user.entity';
-import { Profile } from './profile/entities/profile.entity';
-import { Photo } from './photo/entities/photo.entity';
-import { Category } from './category/entities/category.entity';
-import { Question } from './question/entities/question.entity';
+import { TypeOrmModule } from '@nestjs/typeorm';
 import { ProfileModule } from './profile/profile.module';
 import { PhotoModule } from './photo/photo.module';
 import { CategoryModule } from './category/category.module';
@@ -18,7 +13,7 @@ import { LoggerModule } from 'nestjs-pino';
 import { join } from 'path';
 import { Logger } from '@nestjs/common';
 import { LogsModule } from './logs/logs.module';
-import { config } from '../ormconfig';
+import { connectParams } from '../ormconfig';
 
 const envFilePath = `.env.${process.env.NODE_ENV}`;
 
@@ -56,11 +51,7 @@ const envFilePath = `.env.${process.env.NODE_ENV}`;
       envFilePath,
       load: [() => dotenv.config({ path: '.env' })],
     }),
-    TypeOrmModule.forRootAsync({
-      imports: [ConfigModule],
-      inject: [ConfigService],
-      useFactory: () => config,
-    }),
+    TypeOrmModule.forRoot(connectParams),
     MongooseModule.forRoot('mongodb://localhost/nest'),
     UserModule,
     ProfileModule,
