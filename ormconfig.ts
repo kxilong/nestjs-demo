@@ -28,7 +28,7 @@ function buildConnectionOptions() {
     password: config.DB_PASSWORD,
     database: config.DB_DATABASE,
     entities: entitiesDir,
-    synchronize: true,
+    synchronize: config.TYPEORM_SYNCHRONIZE === 'true',
     autoLoadEntities: true,
   } as TypeOrmModuleOptions;
 }
@@ -37,6 +37,6 @@ export const connectParams = buildConnectionOptions();
 
 export default new DataSource({
   ...connectParams,
-  migrations: ['src/migration/*.ts'],
+  migrations: ['src/migrations/*{.ts,.js}'],
   subscribers: [],
 } as DataSourceOptions);

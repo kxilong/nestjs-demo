@@ -8,6 +8,7 @@ import {
 import { Request } from 'express';
 import type { Logger } from '@nestjs/common';
 import { HttpAdapterHost } from '@nestjs/core';
+import { QueryFailedError } from 'typeorm';
 
 @Catch()
 export class HttpExceptionFilter implements ExceptionFilter {
@@ -25,19 +26,25 @@ export class HttpExceptionFilter implements ExceptionFilter {
     const allIps = request.ips;
     const path = httpAdapter.getRequestUrl(ctx.getRequest());
     this.logger.error({ path, msg: exception.message }, exception.stack);
+    console.log(exception.message);
 
     const httpStatus =
       exception instanceof HttpException
         ? exception.getStatus()
         : HttpStatus.INTERNAL_SERVER_ERROR;
+    let msg: string = exception['response'] || 'Internal Server Error';
+
+    if (exception instanceof QueryFailedError) {
+      msg = exception.message;
+    }
 
     const responseBody = {
       statusCode: httpStatus,
-      timestamp: new Date().toISOString(),
+      timestamp: new Date().toLocaleString(),
       path,
       allIps,
       clientIp,
-      message: exception.message,
+      msg,
     };
 
     httpAdapter.reply(ctx.getResponse(), responseBody, httpStatus);

@@ -14,6 +14,9 @@ import { join } from 'path';
 import { Logger } from '@nestjs/common';
 import { LogsModule } from './logs/logs.module';
 import { connectParams } from '../ormconfig';
+import { AuthModule } from './auth/auth.module';
+import { RolesModule } from './roles/roles.module';
+import { MenusModule } from './menus/menus.module';
 
 const envFilePath = `.env.${process.env.NODE_ENV}`;
 
@@ -59,6 +62,9 @@ const envFilePath = `.env.${process.env.NODE_ENV}`;
     CategoryModule,
     QuestionModule,
     LogsModule,
+    AuthModule,
+    RolesModule,
+    MenusModule,
   ],
   providers: [Logger],
   exports: [Logger],

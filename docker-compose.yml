@@ -17,9 +17,9 @@ services:
     environment:
        MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}  # 根用户密码
     
-    volumes:
-      # 数据卷：将容器内的数据目录挂载到宿主机，实现数据持久化
-      - ${MYSQL_DATA_VOLUME}:/var/lib/mysql           
+    # volumes:
+    #   # 数据卷：将容器内的数据目录挂载到宿主机，实现数据持久化
+    #   - ${MYSQL_DATA_VOLUME}:/var/lib/mysql           
 
   adminer:
     image: adminer

@@ -1,5 +1,5 @@
 export class getUserDto {
-  page: number;
+  page?: number;
   limit?: number;
   name?: string;
 }
