@@ -8,8 +8,6 @@ import {
   ManyToMany,
   JoinTable,
 } from 'typeorm';
-import { Profile } from '../../profile/entities/profile.entity';
-import { Photo } from '../../photo/entities/photo.entity';
 import { Exclude } from 'class-transformer';
 import { Role } from '../../roles/entities/role.entity';
 
@@ -26,25 +24,16 @@ export class User {
   @Exclude()
   password: string;
 
-  @Column({ default: true })
-  @Exclude()
-  isActive: boolean;
-
-  @OneToOne(() => Profile, (profile) => profile.user, {
-    cascade: true, // 级联更新关联的profile
-    // onUpdate: 'CASCADE', // 数据库级联更新
-  }) // 指定另一面作为第二个参数
-  @JoinColumn()
-  profile: Profile;
-
-  @OneToMany(() => Photo, (photo) => photo.user, { cascade: true })
-  @JoinColumn()
-  photos: Photo[];
-
   // 多对多关系放在另一面
-  @ManyToMany(() => Role, (role) => role.users)
+  @ManyToMany(() => Role, (role) => role.users, {
+    cascade: ['insert', 'update'], // 级联操作（可选，根据需求设置）
+    onDelete: 'CASCADE', // 当角色被删除时，自动删除关联记录
+  })
   @JoinTable({
     name: 'user_roles',
+    joinColumn: { name: 'user_id', referencedColumnName: 'id' }, // 关联用户的外键
+    inverseJoinColumn: { name: 'role_id', referencedColumnName: 'id' }, // 关联角色的外键
   })
+  @JoinColumn()
   roles: Role[];
 }

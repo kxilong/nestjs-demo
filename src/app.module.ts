@@ -3,8 +3,6 @@ import { AppController } from './app.controller';
 import { ConfigModule } from '@nestjs/config';
 import * as dotenv from 'dotenv';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { ProfileModule } from './profile/profile.module';
-import { PhotoModule } from './photo/photo.module';
 import { CategoryModule } from './category/category.module';
 import { QuestionModule } from './question/question.module';
 import { UserModule } from './user/user.module';
@@ -55,10 +53,8 @@ const envFilePath = `.env.${process.env.NODE_ENV}`;
       load: [() => dotenv.config({ path: '.env' })],
     }),
     TypeOrmModule.forRoot(connectParams),
-    MongooseModule.forRoot('mongodb://localhost/nest'),
+    // MongooseModule.forRoot('mongodb://localhost/nest'),
     UserModule,
-    ProfileModule,
-    PhotoModule,
     CategoryModule,
     QuestionModule,
     LogsModule,

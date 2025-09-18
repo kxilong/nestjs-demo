@@ -2,7 +2,6 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from './entities/user.entity';
 import { Repository } from 'typeorm';
-import { Photo } from 'src/photo/entities/photo.entity';
 import { getUserDto } from './dto/query-user.dto';
 import { conditionUtils } from 'src/utils/db.helper';
 
@@ -10,7 +9,6 @@ import { conditionUtils } from 'src/utils/db.helper';
 export class UserService {
   constructor(
     @InjectRepository(User) private usersRepository: Repository<User>,
-    @InjectRepository(Photo) private photosRepository: Repository<Photo>,
   ) {}
 
   findAll(query: getUserDto): Promise<User[]> {
@@ -83,17 +81,6 @@ export class UserService {
   }
 
   findCountByUserId(userId: number) {
-    return this.photosRepository
-      .createQueryBuilder('photo')
-      .select('photo.code')
-      .addSelect('COUNT("photo.code")', 'count')
-      .leftJoinAndSelect('photo.user', 'user')
-      .where('user.id = :userId', { userId })
-      .groupBy('photo.code')
-      .orderBy('code', 'DESC')
-      .addOrderBy('count', 'DESC')
-      .offset(1)
-      .limit(2)
-      .getRawMany();
+    return 111;
   }
 }

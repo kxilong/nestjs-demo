@@ -41,13 +41,13 @@ export class AuthController {
   }
 
   @Post('/signUp')
-  @UseGuards(AuthGuard('jwt'))
   signUp(@Body(new ValidationPipe()) body: SignUserDto, @Req() req) {
     const { name, password } = body;
     return this.authService.signUp(name, password);
   }
 
   @Post('/updateInfo')
+  @UseGuards(AuthGuard('jwt'))
   @UseInterceptors(new SerializeInterceptor(ResultDto))
   updateUserInfo(@Body() dto: UserDto) {
     return dto;
