@@ -17,7 +17,7 @@ export class User {
   @Exclude()
   id: number;
 
-  @Column({ unique: true })
+  @Column({ unique: true, nullable: false })
   name: string;
 
   @Column()
@@ -31,8 +31,6 @@ export class User {
   })
   @JoinTable({
     name: 'user_roles',
-    joinColumn: { name: 'user_id', referencedColumnName: 'id' }, // 关联用户的外键
-    inverseJoinColumn: { name: 'role_id', referencedColumnName: 'id' }, // 关联角色的外键
   })
   @JoinColumn()
   roles: Role[];

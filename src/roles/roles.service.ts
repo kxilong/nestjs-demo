@@ -11,6 +11,11 @@ export class RolesService {
     @InjectRepository(Role) private roleRepository: Repository<Role>,
   ) {}
 
+  // 根据ID列表查询角色
+  async findByIds(ids: number[]): Promise<Role[]> {
+    return this.roleRepository.findByIds(ids);
+  }
+
   create(createRoleDto: CreateRoleDto) {
     const role = this.roleRepository.create(createRoleDto);
     return this.roleRepository.save(role);
@@ -18,6 +23,10 @@ export class RolesService {
 
   findAll() {
     return this.roleRepository.find();
+  }
+
+  findByName(name: string) {
+    return this.roleRepository.findOne({ where: { name } });
   }
 
   findOne(id: number) {

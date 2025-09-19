@@ -41,11 +41,17 @@ export class UserService {
   }
 
   findOne(id: number): Promise<User | null> {
-    return this.usersRepository.findOneBy({ id });
+    return this.usersRepository.findOne({
+      where: { id },
+      relations: ['roles'],
+    });
   }
 
   findOneByName(name: string): Promise<User | null> {
-    return this.usersRepository.findOneBy({ name });
+    return this.usersRepository.findOne({
+      where: { name },
+      relations: ['roles'],
+    });
   }
 
   async create(user: Partial<User>): Promise<User> {

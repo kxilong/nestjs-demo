@@ -10,7 +10,7 @@ import {
   ValidationPipe,
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
-import { SignUserDto } from './dto/sign-user.dto';
+import { SignUpDto, SignUserDto } from './dto/sign-user.dto';
 import { AuthGuard } from '@nestjs/passport';
 import { SerializeInterceptor } from '../interceptors/serialize/serialize.interceptor';
 import { Expose } from 'class-transformer';
@@ -41,9 +41,9 @@ export class AuthController {
   }
 
   @Post('/signUp')
-  signUp(@Body(new ValidationPipe()) body: SignUserDto, @Req() req) {
-    const { name, password } = body;
-    return this.authService.signUp(name, password);
+  signUp(@Body(new ValidationPipe()) body: SignUpDto, @Req() req) {
+    const { name, password, roleIds } = body;
+    return this.authService.signUp(name, password, roleIds);
   }
 
   @Post('/updateInfo')
